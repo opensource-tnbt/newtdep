@@ -130,7 +130,7 @@ def pack_openstack_params():
     """
     Packe Openstack Parameters
     """
-    if not S.hasValue(OS_AUTH_URL):
+    if not S.hasValue('OS_AUTH_URL'):
         raise Exception(
             'OpenStack authentication endpoint is missing')
 
@@ -141,22 +141,22 @@ def pack_openstack_params():
                   os_cacert=S.getValue('OS_CA_CERT'),
                   os_insecure=S.getValue('OS_INSECURE'))
 
-        if S.hasValue('OS_PROJECT_NAME'):
-            value = S.getValue('OS_PROJECT_NAME'):
-            params['auth']['project_name'] = value
-        if S.hasValue('OS_PROJECT_DOMAIN_NAME'):
-            value = S.getValue('OS_PROJECT_DOMAIN_NAME'):
-            params['auth']['project_domain_name'] = value
-        if S.hasValue('OS_USER_DOMAIN_NAME'):
-            value = S.getValue('OS_USER_DOMAIN_NAME'):
-            params['auth']['user_domain_name'] = value
-        if S.hasValue('OS_INTERFACE'):
-            value = S.getValue('OS_INTERFACE'):
-            params['os_interface'] = value
-        if S.hasValue('OS_API_VERSION'):
-            value = S.getValue('OS_API_VERSION'):
-            params['identity_api_version'] = value
-        if S.hasValue('OS_PROFILE'):
-            value = S.getValue('OS_PROFILE'):
-            params['os_profile'] = value
+    if S.hasValue('OS_PROJECT_NAME'):
+        value = S.getValue('OS_PROJECT_NAME')
+        params['auth']['project_name'] = value
+    if S.hasValue('OS_PROJECT_DOMAIN_NAME'):
+        value = S.getValue('OS_PROJECT_DOMAIN_NAME')
+        params['auth']['project_domain_name'] = value
+    if S.hasValue('OS_USER_DOMAIN_NAME'):
+        value = S.getValue('OS_USER_DOMAIN_NAME')
+        params['auth']['user_domain_name'] = value
+    if S.hasValue('OS_INTERFACE'):
+        value = S.getValue('OS_INTERFACE')
+        params['os_interface'] = value
+    if S.hasValue('OS_API_VERSION'):
+        value = S.getValue('OS_API_VERSION')
+        params['identity_api_version'] = value
+    if S.hasValue('OS_PROFILE'):
+        value = S.getValue('OS_PROFILE')
+        params['os_profile'] = value
     return params

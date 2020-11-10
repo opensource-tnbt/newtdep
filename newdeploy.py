@@ -21,6 +21,7 @@ from osclients import nova
 from osclients import openstack
 
 LOG = logging.getLogger(__name__)
+_CURR_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class DeploymentException(Exception):
     """ Exception Handling """
@@ -55,6 +56,7 @@ def generate_agents(compute_nodes, accommodation, unique):
     """
     Generate TestVNF Instances
     """
+    print('Number of compute nodes')
     print(compute_nodes)
     density = accommodation.get('density') or 1
 
@@ -79,7 +81,7 @@ def generate_agents(compute_nodes, accommodation, unique):
                               avail=len(compute_nodes)))
             else:
                 raise DeploymentException(
-                    'Not enough compute nodes %(cn)s for requested '
+                    'Exception Not enough compute nodes %(cn)s for requested '
                     'instance accommodation %(acc)s' %
                     dict(cn=compute_nodes, acc=accommodation))
         else:
@@ -315,8 +317,10 @@ class Deployment(object):
         Get available comput nodes
         """
         try:
-            return nova.get_available_compute_nodes(self.openstack_client.nova,
-                                                    self.flavor_name)
+            comps = nova.get_available_compute_nodes(self.openstack_client.nova,
+                                                     self.flavor_name)
+            print(comps)
+            return comps
         except nova.ForbiddenException:
             # user has no permissions to list compute nodes
             LOG.info('OpenStack user does not have permission to list compute '
@@ -449,7 +453,7 @@ def read_scenario(scenario_name):
 
     scenario = utils.read_yaml_file(scenario_file_name)
 
-    schema = utils.read_yaml_file(S.getValue('SCHMEMA'))
+    schema = utils.read_yaml_file(S.getValue('SCHEMA'))
     utils.validate_yaml(scenario, schema)
 
     scenario['title'] = scenario.get('title') or scenario_file_name
@@ -523,7 +527,7 @@ def act():
     """
     for scenario_name in S.getValue('SCENARIOS'):
         LOG.info('Play scenario: %s', scenario_name)
-        print('Play scenario: %s', scenario_name)
+        print('Play scenario: {}'.format(scenario_name))
         scenario = read_scenario(scenario_name)
         play_output = play_scenario(scenario)
         print(play_output)
@@ -565,17 +569,20 @@ def create_vsperf_conffile(agents, tgen):
 def main():
     """Main function.
     """
-    args = parse_arguments()
+    #args = parse_arguments()
 
     # define the timestamp to be used by logs and results
     date = datetime.datetime.fromtimestamp(time.time())
     timestamp = date.strftime('%Y-%m-%d_%H-%M-%S')
-    settings.setValue('LOG_TIMESTAMP', timestamp)
+    S.setValue('LOG_TIMESTAMP', timestamp)
 
 
     # configure settings
-    settings.load_from_dir(os.path.join(_CURR_DIR, 'conf'))
+    S.load_from_dir(os.path.join(_CURR_DIR, 'conf'))
+    openstack_params = utils.pack_openstack_params()
+    print(openstack_params)
     output = act()
+    print(output)
 
 if __name__ == "__main__":
     main()
